@@ -14,17 +14,15 @@
  */
 package fr.neatmonster.nocheatplus.compat.bukkit;
 
-import java.util.UUID;
-
-import org.bukkit.attribute.Attribute;
+import fr.neatmonster.nocheatplus.compat.AttribUtil;
+import fr.neatmonster.nocheatplus.components.modifier.IAttributeAccess;
+import fr.neatmonster.nocheatplus.utilities.ReflectionUtil;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.entity.Player;
 
-import fr.neatmonster.nocheatplus.compat.AttribUtil;
-import fr.neatmonster.nocheatplus.components.modifier.IAttributeAccess;
-import fr.neatmonster.nocheatplus.utilities.ReflectionUtil;
+import java.util.UUID;
 
 public class BukkitAttributeAccess implements IAttributeAccess {
 
@@ -70,17 +68,25 @@ public class BukkitAttributeAccess implements IAttributeAccess {
 
     @Override
     public double getSpeedAttributeMultiplier(final Player player) {
-        final AttributeInstance attrInst = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-        final double val = attrInst.getValue() / attrInst.getBaseValue();
-        final AttributeModifier mod = getModifier(attrInst, AttribUtil.ID_SPRINT_BOOST);
-        return mod == null ? val : (val / getMultiplier(mod));
+        // This is an expensive operation that's called frequently, we can just give
+        // all players the benefit of the doubt and assume they have a speed modifier
+        // of 2.0 at all times to negate the performance loss for this check
+        return 2.0D;
+//        final AttributeInstance attrInst = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+//        final double val = attrInst.getValue() / attrInst.getBaseValue();
+//        final AttributeModifier mod = getModifier(attrInst, AttribUtil.ID_SPRINT_BOOST);
+//        return mod == null ? val : (val / getMultiplier(mod));
     }
 
     @Override
     public double getSprintAttributeMultiplier(final Player player) {
-        final AttributeInstance attrInst = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-        final AttributeModifier mod = getModifier(attrInst, AttribUtil.ID_SPRINT_BOOST);
-        return mod == null ? 1.0 : getMultiplier(mod);
+        // This is an expensive operation that's called frequently, we can just give
+        // all players the benefit of the doubt and assume they have a speed modifier
+        // of 2.5 at all times to negate the performance loss for this check
+        return 2.5D;
+//        final AttributeInstance attrInst = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+//        final AttributeModifier mod = getModifier(attrInst, AttribUtil.ID_SPRINT_BOOST);
+//        return mod == null ? 1.0 : getMultiplier(mod);
     }
 
 }
